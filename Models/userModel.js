@@ -112,16 +112,7 @@ function validateNewPassowrd(request){
     return schema2.validate(request)
 }
 
-function validateDownloadData(request){
 
-    const schema2 = Joi.object({
-        email:Joi.string().required().email(),
-        password:Joi.string().min(6).required(),
-        promoCategorie:Joi.string().min(3).required(),
-    })
-
-    return schema2.validate(request)
-}
 
 
 module.exports.User=User
@@ -130,5 +121,3 @@ module.exports.validateUser=validateUser
 module.exports.validateModifierMotPasse=validateModifierMotPasse
 module.exports.validateNewPassowrd=validateNewPassowrd
 module.exports.validateUpdateUser=validateUpdateUser
-module.exports.validateDownloadData=validateDownloadData
-

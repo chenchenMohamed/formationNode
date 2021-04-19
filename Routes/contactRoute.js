@@ -14,7 +14,6 @@ router.post('/newContact', async(req,res)=>{
     const num = nbr + 1;
     
     const contact=new Contact({
-        
         num:num,
         isOpen:0,
         nom:req.body.nom,
