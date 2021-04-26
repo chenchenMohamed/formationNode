@@ -32,6 +32,7 @@ router.post('/upload',upload.array('myFiles'),async(req,res)=>{
 
 
 router.post('/newFormation',  verifytoken, async(req,res)=>{
+    
     const {error}=validateFormation(req.body)
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
    
@@ -50,7 +51,7 @@ router.post('/newFormation',  verifytoken, async(req,res)=>{
         descriptionsDessous:req.body.descriptionsDessous,
         chapitres:req.body.chapitres,
         createdFormation:dateCurrent,
-        formateur:req.user.user._id
+        formateur:req.user.user.id
     })
     
     const result=await formation.save()
@@ -151,9 +152,9 @@ router.post('/listFormation', async(req,res)=>{
     tabFilterGlobal = {$or : filterCategories}
   }
 
-  const result=await  Produit.paginate(tabFilterGlobal, options) 
+  const result=await  Formation.paginate(tabFilterGlobal, options) 
   
-  return res.send({status:true,resultat:result, specials:specials, request:req.body})
+  return res.send({status:true,resultat:result, request:req.body})
 
 })
 

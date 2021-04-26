@@ -8,7 +8,7 @@ const schemaFormation=mongoose.Schema({
     nom:{type:String, default: ""},
     nomLower:{type:String, default: ""},
 
-    formateur:{type:String,required:true},
+    formateur:{type:String, default: ""},
     
     prixVente:{type:Number, default: 0},
     
@@ -16,30 +16,28 @@ const schemaFormation=mongoose.Schema({
     
     prixPromo:{type:Number,default: 0},
  
-    imagePrincipale:{type:String,required:true},
+    imagePrincipale:{type:String, default: ""},
 
-    createdFormation:{type:String,required:true},
+    createdFormation:{type:String, default: ""},
  
     categories:[{
-        categorie:{type:String,required:true},
+        categorie:{type:String, default: ""},
     }],
 
     descriptionsDessus:[{
-        ligne:{type:String,required:true},
+        ligne:{type:String, default: ""},
     }],
 
     descriptionsDessous:[{
-        title:{type:String,required:true},
-        value:{type:String,required:true},
+        title:{type:String, default: ""},
+        value:{type:String, default: ""},
     }],
     
     chapitres:[{
-        titre:{type:String,required:true},
-        description:{type:String,required:true},
-        image:{type:String,required:true},
-        video:{type:String,required:true},
-        modeRessource:{type:String,required:true},
-        coursPdf:{type:String,required:true},
+        titre:{type:String,default: ""},
+        description:{type:String,default: ""},
+        video:{type:String,default: ""},
+        coursPdf:{type:String,default: ""},
         reponses:[
             {
                 idEtudiant:{type:String,default: ""},
@@ -85,9 +83,8 @@ function validateFormation(produit){
     let itemChapitre = Joi.object().keys({
         titre:Joi.string().allow('', null),
         description:Joi.string().allow('', null),
-        image:Joi.string().allow('', null),
+        videoYoutube:Joi.string().allow('', null),
         video:Joi.string().allow('', null),
-        modeRessource:Joi.string().allow('', null),
         coursPdf:Joi.string().allow('', null),
     })
 
@@ -97,7 +94,7 @@ function validateFormation(produit){
         prixVente:Joi.number().required(),
         prixPromo:Joi.number().allow('', null),
         
-        imagePrincipale:Joi.number().allow('', null),
+        imagePrincipale:Joi.string().allow('', null),
         categories:Joi.array().items(itemCategorie),
         descriptionsDessous:Joi.array().items(itemDescriptionDessous),
         descriptionsDessus:Joi.array().items(itemDescriptionDessus),

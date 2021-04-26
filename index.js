@@ -9,19 +9,17 @@ const { routerContact } = require("./Routes/contactRoute")
 const {routerServerMail} = require("./Routes/serverMail")
 
 
-
 const cors=require('cors')
 
 
-mongoose.connect("mongodb://localhost/formationBD",{ useUnifiedTopology: true,useNewUrlParser: true })
-.then(console.log("connected to mongodb"))
-.catch(err=>console.log(err))
-
-/*
-mongoose.connect("mongodb+srv://cluster0.jfk75.mongodb.net/test",{ useUnifiedTopology: true,useNewUrlParser: true , username: "JR-Test", password: "test" })
+/*mongoose.connect("mongodb://localhost/formationBD",{ useUnifiedTopology: true,useNewUrlParser: true })
 .then(console.log("connected to mongodb"))
 .catch(err=>console.log(err))
 */
+
+mongoose.connect("mongodb+srv://cluster0.jfk75.mongodb.net/formation",{ useUnifiedTopology: true,useNewUrlParser: true , username: "JR-Test", password: "test" })
+.then(console.log("connected to mongodb"))
+.catch(err=>console.log(err))
 
 app.use(express.json())
 
