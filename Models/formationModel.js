@@ -66,17 +66,17 @@ function validateFormation(produit){
 
 
     let itemDescriptionDessous = Joi.object().keys({
-        title:Joi.string().required(),
-        value:Joi.string().required(),
+        title:Joi.string().allow('', null),
+        value:Joi.string().allow('', null),
     })
 
     let itemDescriptionDessus = Joi.object().keys({
-        ligne:Joi.string().required(),
+        ligne:Joi.string().allow('', null),
     })
 
     
     let itemCategorie = Joi.object().keys({
-        categorie:Joi.string().required(),
+        categorie:Joi.string().allow('', null),
     })
 
 
@@ -90,8 +90,8 @@ function validateFormation(produit){
 
     const schema2=Joi.object({
         
-        nom:Joi.string().required(),
-        prixVente:Joi.number().required(),
+        nom:Joi.string().allow('', null),
+        prixVente:Joi.number().allow('', null),
         prixPromo:Joi.number().allow('', null),
         
         imagePrincipale:Joi.string().allow('', null),

@@ -158,6 +158,43 @@ router.post('/listFormation', async(req,res)=>{
 
 })
 
+router.post('/listFormationFormateur',  verifytoken, async(req,res)=>{
+    
+  if(req.user.user.role != "Formateur") return res.status(401).send({status:false})
+
+  const {error}=validateFormationsCategories(req.body)
+  if(error) return res.status(400).send({status:false,message:error.details[0].message})
+  
+  const options = {
+    page: req.body.page,
+    limit: Number(req.body.limitItems) ,
+    customLabels: myCustomLabels,
+    sort:{
+      createdAt: -1 
+    }
+  };
+
+  var tabFilterGlobal = {}
+
+  var filterCategories = []
+  
+  for(var i = 0; i < req.body.listCategories.length; i++){
+    filterCategories.push({'categories.categorie':req.body.listCategories[i].categories});
+  }
+
+  if(filterCategories.length > 0){
+    ok =true
+    tabFilterGlobal = {$or : filterCategories, formateur:req.user.user._id}
+  }else{
+    tabFilterGlobal = {formateur:req.user.user.id}
+  }
+
+  const result=await  Formation.paginate(tabFilterGlobal, options) 
+  
+  return res.send({status:true,resultat:result, request:req.body})
+
+})
+
 router.post('/recherche/:search', async(req,res)=>{
   
     const {error}=validateFormationPagination(req.body)
@@ -196,8 +233,9 @@ router.get('/getById/:id', async(req,res)=>{
   if(req.params.id == undefined || req.params.id == null || req.params.id == "") return res.status(400).send({status:false})
 
   const formation = await Formation.findOne({_id:req.params.id})
+  const formateur = await User.findOne({_id:formation.formateur})
   
-  return res.send({status:true,resultat:formation}) 
+  return res.send({status:true,resultat:formation, formateur:formateur}) 
   
 })
 
@@ -222,7 +260,7 @@ function verifytoken(req, res, next){
   
   }else{
     console.log("etape100");
-     res.sendStatus(401);
+    res.sendStatus(401);
   }
 
 }
