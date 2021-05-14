@@ -51,7 +51,8 @@ router.post('/newFormation',  verifytoken, async(req,res)=>{
         descriptionsDessous:req.body.descriptionsDessous,
         chapitres:req.body.chapitres,
         createdFormation:dateCurrent,
-        formateur:req.user.user.id
+        formateur:req.user.user.id,
+        nbrParticipant:0
     })
     
     const result=await formation.save()
@@ -64,16 +65,15 @@ router.post('/modifierFormation/:id',  verifytoken, async(req,res)=>{
     const {error}=validateFormation(req.body)
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
-    if(req.user.user.role != "Formation") return res.status(401).send({status:false})
+    if(req.user.user.role != "Formateur") return res.status(401).send({status:false})
     
     dateNow = dateFormat(new Date(), "yyyy-mm-dd HH:MM")
     
     const formation = await Formation.findById(req.params.id)
-   
+
     if(!formation) return res.status(401).send({status:false}) 
 
-    if(formation.formateur != req.user.user._id) return res.status(401).send({status:false})
-    
+    if(formation.formateur != req.user.user.id) return res.status(401).send({status:false})
     
     const result = await Formation.findOneAndUpdate({_id:req.params.id},{
   
@@ -99,9 +99,9 @@ router.get('/deleteFormation/:id',  verifytoken, async(req,res)=>{
 
     const formation = await Formation.findById(req.params.id)
    
-    if(!formation) return res.status(401).send({status:false}) 
+    if(!formation) return res.status(402).send({status:false}) 
 
-    if(formation.formateur != req.user.user._id) return res.status(401).send({status:false})
+    if(formation.formateur != req.user.user.id) return res.status(403).send({status:false})
     
     if(await Formation.findOneAndDelete({_id:req.params.id})){
         return res.send({status:true})
@@ -128,7 +128,7 @@ const myCustomLabels = {
 router.post('/listFormation', async(req,res)=>{
 
   const {error}=validateFormationsCategories(req.body)
-  if(error) return res.status(400).send({status:false,message:error.details[0].message})
+ if(error) return res.status(400).send({status:false,message:error.details[0].message})
   
   const options = {
     page: req.body.page,
@@ -236,6 +236,18 @@ router.get('/getById/:id', async(req,res)=>{
   const formateur = await User.findOne({_id:formation.formateur})
   
   return res.send({status:true,resultat:formation, formateur:formateur}) 
+  
+})
+
+router.get('/getById2/:id', async(req,res)=>{
+
+  if(req.params.id == undefined || req.params.id == null || req.params.id == "") return res.status(400).send({status:false})
+
+  const formateur = await User.findOne({_id:req.params.id})
+ 
+  const formations = await Formation.find({formateur:formateur.id})
+  
+  return res.send({status:true,resultat:formations, formateur:formateur}) 
   
 })
 

@@ -1,4 +1,5 @@
-const {User, validateNewPassowrd, validateLogin, validateUser, validateUpdateUser} =require('../Models/userModel')
+const {User, validateFormateur, validateNewPassowrd, validateLogin, validateUser, validateUpdateUser} =require('../Models/userModel')
+const {Formation,validateFormation, validateFormationsCategories, validateFormationsPagination} =require('../Models/formationModel')
 
 const express=require('express')
 const router=express.Router()
@@ -17,6 +18,106 @@ const myCustomLabels = {
     pagingCounter: 'slNo',
     meta: 'paginator'
 };
+
+
+router.post('/registerFormateur',async(req,res)=>{
+    
+    const {error}=validateFormateur(req.body)
+    if(error) return res.send({status:false,message:error.details[0].message})
+
+    const emailExist = await User.findOne({ email: req.body.email});
+    if(emailExist) return res.send({status:false,message:'errorRegister'})
+
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(req.body.password, salt);
+
+    let role = req.body.role;
+
+    const nbr = await User.count({});
+    const num = nbr + 1;
+
+    const user=new User({
+        nom:req.body.nom,
+        num:num,
+        specialites:req.body.specialites,
+        prenom:req.body.prenom,
+        telephone:req.body.telephone,
+        adresse:req.body.adresse,
+        role:role,
+        prenom:req.body.prenom,
+        email:req.body.email,
+        password: hashPassword,
+        ville: req.body.ville,
+        pays: req.body.pays,
+        codePostal: req.body.codePostal,
+        company: req.body.company,
+        image:req.body.image,
+        categories:req.body.categories,
+        formations:req.body.formations,
+        stages:req.body.stages,
+        experiences:req.body.experiences
+    })
+
+    const result=await user.save()
+
+    return res.send({status:true,resultat:result})
+})
+
+router.post('/updateFormateur', verifytoken, async(req,res)=>{
+
+    const {error}=validateFormateur(req.body)
+    if(error) return res.send({status:false,message:error.details[0].message})
+
+    if(req.body.email != req.user.user.email){
+        return res.send({status:false,message:'errorUpdateCompte1'});
+    }
+
+    const users = await User.find({email:req.body.email})
+    const user = users[0]
+    const newUser = user
+
+    if(users.length == 0) return res.send({status:false,message:'errorUpdateCompte1'});
+    
+    if(req.body.newEmail != null && req.body.newEmail != ""){
+        const users2 = await User.find({email:req.body.newEmail})
+        if(users2.length > 0 && req.body.email != req.body.newEmail) return res.send({status:false,message:'errorUpdateCompte2'});
+        newUser.email = req.body.newEmail
+    }
+
+    const validationPassword = await bcrypt.compare(req.body.password, user.password)
+    if(!validationPassword) return res.send({status:false, message:'errorUpdateCompte3'});
+    
+    if(req.body.newPassword != null && req.body.newPassword != ""){
+       var hashPassword = ""
+       const salt = await bcrypt.genSalt(10);
+       hashPassword = await bcrypt.hash(req.body.newPassword, salt);
+       newUser.password = hashPassword
+
+    }
+
+    const result = await User.findByIdAndUpdate(req.user.user.id,{
+        nom:req.body.nom,
+        prenom:req.body.prenom,
+        telephone:req.body.telephone,
+        specialites:req.body.specialites,
+        adresse:req.body.adresse,
+        prenom:req.body.prenom,
+        email:newUser.email,
+        password: newUser.password,
+        ville: req.body.ville,
+        pays: req.body.pays,
+        codePostal: req.body.codePostal,
+        company: req.body.company,
+        image:req.body.image,
+        categories:req.body.categories,
+        formations:req.body.formations,
+        stages:req.body.stages,
+        experiences:req.body.experiences
+    })
+        
+    return res.send({status:true,resultat:result})
+
+})
 
 router.post('/register',async(req,res)=>{
     
@@ -205,8 +306,43 @@ router.post('/listesClients', verifytoken, async(req,res)=>{
     return res.send({status:true,resultat:result})
 })
 
- 
+router.post('/formateurs', async(req,res)=>{
+    
+  
+    const {error}=validateFormationsCategories(req.body)
 
+    if(error) return res.status(400).send({status:false,message:error.details[0].message})
+    
+    const options = {
+      page: req.body.page,
+      limit: Number(req.body.limitItems) ,
+      customLabels: myCustomLabels,
+      sort:{
+        createdAt: -1 
+      }
+    };
+  
+    var tabFilterGlobal = {}
+  
+    var filterCategories = []
+    
+    for(var i = 0; i < req.body.listCategories.length; i++){
+      filterCategories.push({'categories.categorie':req.body.listCategories[i].categories});
+    }
+  
+    if(filterCategories.length > 0){
+      ok =true
+      tabFilterGlobal = {$or : filterCategories}
+    }else{
+      tabFilterGlobal = {}
+    }
+  
+    const result=await  User.paginate(tabFilterGlobal, options) 
+    
+    return res.send({status:true,resultat:result, request:req.body})
+  
+})
+  
 
 function verifytoken(req, res, next){
     

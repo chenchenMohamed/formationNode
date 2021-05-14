@@ -38,13 +38,6 @@ const schemaFormation=mongoose.Schema({
         description:{type:String,default: ""},
         video:{type:String,default: ""},
         coursPdf:{type:String,default: ""},
-        reponses:[
-            {
-                idEtudiant:{type:String,default: ""},
-                reponsePdf:{type:String,default: ""},
-                etat:{type:String,default: ""}
-            }
-        ]
     }],
     
 },
