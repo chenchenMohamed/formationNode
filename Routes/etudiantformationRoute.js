@@ -38,6 +38,20 @@ router.post('/newInscription/:id', verifytoken, async(req,res)=>{
     return res.send({status:true,resultat:result})
 })
 
+
+
+router.get('/getCondidature/:id', verifytoken, async(req,res)=>{
+    
+    if(req.user.user.role != "Etudiant") return res.status(401).send({status:false})
+   
+    let inscriptions = await EtudiantFormation.find({idEtudiant:req.user.user.id, idFormation:req.params.id});
+    if(inscriptions.length == 0) return res.status(401).send({status:false}) 
+
+    return res.send({status:true,resultat:inscriptions[0]})
+
+})
+
+
 router.get('/list', async(req,res)=>{
     
     const result = await EtudiantFormation.find({})
@@ -58,6 +72,43 @@ router.post('/listInscriptions/:id', verifytoken, async(req,res)=>{
     };
 
     const result = await EtudiantFormation.paginate({idFormation:req.params.id, etat:0}, options);
+
+    return res.send({status:true,resultat:result})
+})
+
+router.post('/listEtudiants/:id', verifytoken, async(req,res)=>{
+    
+    const options = {
+        page: req.body.page,
+        limit: 20,
+        customLabels: myCustomLabels,
+        populate: 'idEtudiant',
+        sort:{
+           createdAt: -1 
+        }
+    };
+
+    const result = await EtudiantFormation.paginate({idFormation:req.params.id, etat:1}, options);
+
+    return res.send({status:true,resultat:result})
+})
+
+router.post('/activerEtudiant/:id', verifytoken, async(req,res)=>{
+    
+    
+    const result = await EtudiantFormation.findByIdAndUpdate(req.params.id,{
+        etat:1
+    })
+
+    return res.send({status:true,resultat:result})
+})
+
+router.post('/desctiveEtudiant/:id', verifytoken, async(req,res)=>{
+    
+    
+    const result = await EtudiantFormation.findByIdAndUpdate(req.params.id,{
+        etat:0
+    })
 
     return res.send({status:true,resultat:result})
 })

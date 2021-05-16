@@ -86,6 +86,7 @@ router.post('/modifierFormation/:id',  verifytoken, async(req,res)=>{
       descriptionsDessus:req.body.descriptionsDessus,
       descriptionsDessous:req.body.descriptionsDessous,
       chapitres:req.body.chapitres,
+      
     })
 
     const formation2 = await Formation.findById(req.params.id)
