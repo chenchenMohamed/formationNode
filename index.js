@@ -8,6 +8,7 @@ const { routerProduit } = require("./Routes/formationRoute")
 const { routerContact } = require("./Routes/contactRoute")
 const {routerServerMail} = require("./Routes/serverMail")
 const {routerEtudiantFormation} = require("./Routes/etudiantformationRoute")
+const {routerCentreFormation} = require("./Routes/centreformationRoute")
 
 
 const cors=require('cors')
@@ -31,6 +32,7 @@ app.use('/produit',routerProduit)
 app.use('/contact',routerContact)
 app.use('/email',routerServerMail)
 app.use('/etudiantFormation',routerEtudiantFormation)
+app.use('/centreFormation',routerCentreFormation)
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('uploads'));

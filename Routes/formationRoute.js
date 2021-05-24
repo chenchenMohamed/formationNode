@@ -65,7 +65,7 @@ router.post('/modifierFormation/:id',  verifytoken, async(req,res)=>{
     const {error}=validateFormation(req.body)
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
-    if(req.user.user.role != "Formateur") return res.status(401).send({status:false})
+    if(req.user.user.role != "Formateur" && req.user.user.role != "admin") return res.status(401).send({status:false})
     
     dateNow = dateFormat(new Date(), "yyyy-mm-dd HH:MM")
     
@@ -73,7 +73,7 @@ router.post('/modifierFormation/:id',  verifytoken, async(req,res)=>{
 
     if(!formation) return res.status(401).send({status:false}) 
 
-    if(formation.formateur != req.user.user.id) return res.status(401).send({status:false})
+    if(formation.formateur != req.user.user.id && req.user.user.role != "admin") return res.status(401).send({status:false})
     
     const result = await Formation.findOneAndUpdate({_id:req.params.id},{
   
@@ -96,13 +96,13 @@ router.post('/modifierFormation/:id',  verifytoken, async(req,res)=>{
 
 router.get('/deleteFormation/:id',  verifytoken, async(req,res)=>{
     
-    if(req.user.user.role != "Formateur") return res.status(401).send({status:false})
+    if(req.user.user.role != "Formateur" && req.user.user.role != "admin") return res.status(401).send({status:false})
 
     const formation = await Formation.findById(req.params.id)
    
     if(!formation) return res.status(402).send({status:false}) 
 
-    if(formation.formateur != req.user.user.id) return res.status(403).send({status:false})
+    if(formation.formateur != req.user.user.id && req.user.user.role != "admin") return res.status(403).send({status:false})
     
     if(await Formation.findOneAndDelete({_id:req.params.id})){
         return res.send({status:true})

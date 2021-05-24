@@ -93,6 +93,44 @@ router.post('/listEtudiants/:id', verifytoken, async(req,res)=>{
     return res.send({status:true,resultat:result})
 })
 
+
+router.post('/listInscriptionsEtudiant/:id', verifytoken, async(req,res)=>{
+    
+    const options = {
+        page: req.body.page,
+        limit: 20,
+        customLabels: myCustomLabels,
+        populate: 'idFormation',
+        sort:{
+           createdAt: -1 
+        }
+    };
+
+    const result = await EtudiantFormation.paginate({idEtudiant:req.params.id, etat:0}, options);
+
+    return res.send({status:true,resultat:result})
+})
+
+
+router.post('/listFormationsEtudiant/:id', verifytoken, async(req,res)=>{
+    
+    const options = {
+        page: req.body.page,
+        limit: 20,
+        customLabels: myCustomLabels,
+        populate: 'idFormation',
+        sort:{
+           createdAt: -1 
+        }
+    };
+
+    const result = await EtudiantFormation.paginate({idEtudiant:req.params.id, etat:1}, options);
+
+    return res.send({status:true,resultat:result})
+})
+
+
+
 router.post('/activerEtudiant/:id', verifytoken, async(req,res)=>{
     
     

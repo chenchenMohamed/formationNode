@@ -185,7 +185,7 @@ router.post('/login',async(req,res)=>{
     }
 
     jwt.sign({user}, 'secretkey', (err, token) => {
-        res.json({status:true, email: user.email, token:token, role: user.role});
+        res.json({status:true, email: user.email, token:token, role: user.role, id:user.id});
     });
 
 })
@@ -332,9 +332,9 @@ router.post('/formateurs', async(req,res)=>{
   
     if(filterCategories.length > 0){
       ok =true
-      tabFilterGlobal = {$or : filterCategories}
+      tabFilterGlobal = {role: "Formateur", $or : filterCategories}
     }else{
-      tabFilterGlobal = {}
+      tabFilterGlobal = {role: "Formateur"}
     }
   
     const result=await  User.paginate(tabFilterGlobal, options) 
@@ -343,6 +343,42 @@ router.post('/formateurs', async(req,res)=>{
   
 })
   
+router.post('/etudiants', async(req,res)=>{
+    
+  
+    const {error}=validateFormationsCategories(req.body)
+
+    if(error) return res.status(400).send({status:false,message:error.details[0].message})
+    
+    const options = {
+      page: req.body.page,
+      limit: Number(req.body.limitItems) ,
+      customLabels: myCustomLabels,
+      sort:{
+        createdAt: -1 
+      }
+    };
+  
+    var tabFilterGlobal = {}
+  
+    var filterCategories = []
+    
+    for(var i = 0; i < req.body.listCategories.length; i++){
+      filterCategories.push({'categories.categorie':req.body.listCategories[i].categories});
+    }
+  
+    if(filterCategories.length > 0){
+      ok =true
+      tabFilterGlobal = {role: "Etudiant", $or : filterCategories}
+    }else{
+      tabFilterGlobal = {role: "Etudiant"}
+    }
+  
+    const result=await  User.paginate(tabFilterGlobal, options) 
+    
+    return res.send({status:true,resultat:result, request:req.body})
+  
+})
 
 function verifytoken(req, res, next){
     
