@@ -1,51 +1,40 @@
-const {CentreFormation, validateCentreFormation, validateCentreFormationSansCompte} =require('../Models/CentreFormationModel')
+const {Categorie, validateCategorie, validateCategorieSansCompte} =require('../Models/CategorieModel')
 const express=require('express')
 const router=express.Router()
 const jwt = require('jsonwebtoken');
 
 
 
-router.post('/newCentreFormation', verifytoken, async(req,res)=>{
+router.post('/newCategorie', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     
-    const {error}=validateCentreFormation(req.body)
+    const {error}=validateCategorie(req.body)
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
-    const nbr = await CentreFormation.count({});
+    const nbr = await Categorie.count({});
     const num = nbr + 1;
     
-    const centreFormation=new CentreFormation({
+    const categorie=new Categorie   ({
         num:num,
-        isOpen:0,
         nom:req.body.nom,
-        email:req.body.email,
-        telephone:req.body.telephone,
-        description:req.body.description,
-        adresse:req.body.adresse,
-        specialites:req.body.specialites,
         image:req.body.image
     },)
 
-    const result=await centreFormation.save()
+    const result=await categorie.save()
     return res.send({status:true,resultat:result})
 })
 
 
-router.post('/updateCentreFormation/:id', verifytoken, async(req,res)=>{
+router.post('/updateCategorie/:id', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     
-    const {error}=validateCentreFormation(req.body)
+    const {error}=validateCategorie(req.body)
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
-    const result = await CentreFormation.findOneAndUpdate({_id:req.params.id},{
+    const result = await Categorie.findOneAndUpdate({_id:req.params.id},{
         nom:req.body.nom,
-        email:req.body.email,
-        telephone:req.body.telephone,
-        description:req.body.description,
-        adresse:req.body.adresse,
-        specialites:req.body.specialites,
         image:req.body.image
     },)
 
@@ -55,19 +44,19 @@ router.post('/updateCentreFormation/:id', verifytoken, async(req,res)=>{
 router.get('/getById/:id', async(req,res)=>{
   
     console.log(req.params.id)
-    const result = await CentreFormation.findOne({_id:req.params.id})
+    const result = await Categorie.findOne({_id:req.params.id})
 
     return res.send({status:true,resultat:result})
 
 })
 
-router.get('/deleteCentreFormation/:id', verifytoken, async(req,res)=>{
+router.get('/deleteCategorie/:id', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     console.log(req.params.id)
    
    
-    if(await CentreFormation.findOneAndDelete({_id:req.params.id})){
+    if(await Categorie.findOneAndDelete({_id:req.params.id})){
         return res.send({status:true})
     }else{
         return res.send({status:false})
@@ -90,7 +79,7 @@ const myCustomLabels = {
 
 
 
-router.post('/CentreFormations', async(req,res)=>{
+router.post('/Categories', async(req,res)=>{
   
    
     const options = {
@@ -103,7 +92,7 @@ router.post('/CentreFormations', async(req,res)=>{
         }
     };
 
-    const result=await CentreFormation.find({})
+    const result=await Categorie.find({})
     return res.send({status:true,resultat:result})
     
 })
@@ -114,7 +103,7 @@ router.post('/changeIsOpen', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     
-    const result=await CentreFormation.findByIdAndUpdate(req.body.idCentreFormation,{isOpen:"1"})
+    const result=await Categorie.findByIdAndUpdate(req.body.idCategorie,{isOpen:"1"})
     return res.send({status:true,resultat:result})
     
 })
@@ -142,4 +131,4 @@ function verifytoken(req, res, next){
 
 }
 
-module.exports.routerCentreFormation=router
+module.exports.routerCategorie=router

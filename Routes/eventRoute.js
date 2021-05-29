@@ -1,52 +1,79 @@
-const {CentreFormation, validateCentreFormation, validateCentreFormationSansCompte} =require('../Models/CentreFormationModel')
+const {Event, validateEvent, validateEventSansCompte} =require('../Models/EventModel')
 const express=require('express')
 const router=express.Router()
 const jwt = require('jsonwebtoken');
 
 
 
-router.post('/newCentreFormation', verifytoken, async(req,res)=>{
+router.post('/newEvent', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     
-    const {error}=validateCentreFormation(req.body)
+    const {error}=validateEvent(req.body)
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
-    const nbr = await CentreFormation.count({});
+    const nbr = await Event.count({});
     const num = nbr + 1;
     
-    const centreFormation=new CentreFormation({
+    const event=new Event({
         num:num,
         isOpen:0,
-        nom:req.body.nom,
-        email:req.body.email,
-        telephone:req.body.telephone,
-        description:req.body.description,
+        nomFormateur:req.body.nomFormateur,
+        imageFormateur:req.body.imageFormateur,
+     
         adresse:req.body.adresse,
+        telephone:req.body.telephone,
+        email:req.body.email,
+     
+        timeDepart:req.body.timeDepart,
+        timeEnd:req.body.timeEnd,
+     
+        date:req.body.date,
+        
         specialites:req.body.specialites,
-        image:req.body.image
+     
+        titre1:req.body.titre1,
+        titre2:req.body.titre2,
+       
+        descriptions:req.body.descriptions,
+
+        image:req.body.imageFormateur
+ 
     },)
 
-    const result=await centreFormation.save()
+    const result=await event.save()
     return res.send({status:true,resultat:result})
 })
 
 
-router.post('/updateCentreFormation/:id', verifytoken, async(req,res)=>{
+router.post('/updateEvent/:id', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     
-    const {error}=validateCentreFormation(req.body)
+    const {error}=validateEvent(req.body)
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
-    const result = await CentreFormation.findOneAndUpdate({_id:req.params.id},{
-        nom:req.body.nom,
-        email:req.body.email,
-        telephone:req.body.telephone,
-        description:req.body.description,
+    const result = await Event.findOneAndUpdate({_id:req.params.id},{
+        nomFormateur:req.body.nomFormateur,
+        imageFormateur:req.body.imageFormateur,
+     
         adresse:req.body.adresse,
+        telephone:req.body.telephone,
+        email:req.body.email,
+     
+        timeDepart:req.body.timeDepart,
+        timeEnd:req.body.timeEnd,
+     
+        date:req.body.date,
+        
         specialites:req.body.specialites,
-        image:req.body.image
+     
+        titre1:req.body.titre1,
+        titre2:req.body.titre2,
+       
+        descriptions:req.body.descriptions,
+
+        image:req.body.imageFormateur
     },)
 
     return res.send({status:true,resultat:result})
@@ -54,20 +81,19 @@ router.post('/updateCentreFormation/:id', verifytoken, async(req,res)=>{
 
 router.get('/getById/:id', async(req,res)=>{
   
-    console.log(req.params.id)
-    const result = await CentreFormation.findOne({_id:req.params.id})
+    const result = await Event.findOne({_id:req.params.id})
 
     return res.send({status:true,resultat:result})
 
 })
 
-router.get('/deleteCentreFormation/:id', verifytoken, async(req,res)=>{
+router.get('/deleteEvent/:id', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     console.log(req.params.id)
    
    
-    if(await CentreFormation.findOneAndDelete({_id:req.params.id})){
+    if(await Event.findOneAndDelete({_id:req.params.id})){
         return res.send({status:true})
     }else{
         return res.send({status:false})
@@ -90,7 +116,7 @@ const myCustomLabels = {
 
 
 
-router.post('/CentreFormations', async(req,res)=>{
+router.post('/Events', async(req,res)=>{
   
    
     const options = {
@@ -103,7 +129,7 @@ router.post('/CentreFormations', async(req,res)=>{
         }
     };
 
-    const result=await CentreFormation.find({})
+    const result=await Event.find({})
     return res.send({status:true,resultat:result})
     
 })
@@ -114,7 +140,7 @@ router.post('/changeIsOpen', verifytoken, async(req,res)=>{
   
     if(req.user.user.role != "admin") return res.status(400).send({status:false})
     
-    const result=await CentreFormation.findByIdAndUpdate(req.body.idCentreFormation,{isOpen:"1"})
+    const result=await Event.findByIdAndUpdate(req.body.idEvent,{isOpen:"1"})
     return res.send({status:true,resultat:result})
     
 })
@@ -142,4 +168,4 @@ function verifytoken(req, res, next){
 
 }
 
-module.exports.routerCentreFormation=router
+module.exports.routerEvent=router

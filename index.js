@@ -9,7 +9,9 @@ const { routerContact } = require("./Routes/contactRoute")
 const {routerServerMail} = require("./Routes/serverMail")
 const {routerEtudiantFormation} = require("./Routes/etudiantformationRoute")
 const {routerCentreFormation} = require("./Routes/centreformationRoute")
+const {routerEvent} = require("./Routes/eventRoute")
 
+const {routerCategorie} = require("./Routes/categorieRoute")
 
 const cors=require('cors')
 
@@ -33,6 +35,8 @@ app.use('/contact',routerContact)
 app.use('/email',routerServerMail)
 app.use('/etudiantFormation',routerEtudiantFormation)
 app.use('/centreFormation',routerCentreFormation)
+app.use('/event',routerEvent)
+app.use('/categorie',routerCategorie)
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('uploads'));
