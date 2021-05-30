@@ -116,19 +116,8 @@ const myCustomLabels = {
 
 
 
-router.post('/Events', async(req,res)=>{
+router.get('/Events', async(req,res)=>{
   
-   
-    const options = {
-        page: req.body.page,
-        limit: req.body.limit,
-        customLabels: myCustomLabels,
-        //populate: 'client'
-        sort:{
-            createdAt: -1 
-        }
-    };
-
     const result=await Event.find({})
     return res.send({status:true,resultat:result})
     
