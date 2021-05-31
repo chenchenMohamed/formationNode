@@ -8,6 +8,7 @@ const { routerProduit } = require("./Routes/formationRoute")
 const { routerContact } = require("./Routes/contactRoute")
 const {routerServerMail} = require("./Routes/serverMail")
 const {routerEtudiantFormation} = require("./Routes/etudiantformationRoute")
+const {routerEtudiantEvent} = require("./Routes/etudianteventRoute")
 const {routerCentreFormation} = require("./Routes/centreformationRoute")
 const {routerEvent} = require("./Routes/eventRoute")
 
@@ -34,6 +35,9 @@ app.use('/produit',routerProduit)
 app.use('/contact',routerContact)
 app.use('/email',routerServerMail)
 app.use('/etudiantFormation',routerEtudiantFormation)
+
+app.use('/etudiantEvent',routerEtudiantEvent)
+
 app.use('/centreFormation',routerCentreFormation)
 app.use('/event',routerEvent)
 app.use('/categorie',routerCategorie)
