@@ -39,6 +39,11 @@ const schemaFormation=mongoose.Schema({
         video:{type:String,default: ""},
         coursPdf:{type:String,default: ""},
     }],
+
+    evaluations:[{
+        nomUtilisateur:{type:String,default: ""},
+        nbrEtoiles:{type:Number,default: 0},
+    }],
     
 },
 { timestamps: true })

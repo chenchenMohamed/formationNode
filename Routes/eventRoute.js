@@ -37,7 +37,7 @@ router.post('/newEvent', verifytoken, async(req,res)=>{
        
         descriptions:req.body.descriptions,
 
-        image:req.body.imageFormateur
+        image:req.body.image
  
     },)
 
@@ -73,7 +73,7 @@ router.post('/updateEvent/:id', verifytoken, async(req,res)=>{
        
         descriptions:req.body.descriptions,
 
-        image:req.body.imageFormateur
+        image:req.body.image
     },)
 
     return res.send({status:true,resultat:result})

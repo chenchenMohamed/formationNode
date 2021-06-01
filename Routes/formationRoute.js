@@ -94,6 +94,25 @@ router.post('/modifierFormation/:id',  verifytoken, async(req,res)=>{
     return res.send({status:true,resultat:formation2})
 })
 
+
+router.post('/evaluationFormation/:id',  verifytoken, async(req,res)=>{
+    
+  const formation = await Formation.findById(req.params.id)
+
+  if(!formation) return res.status(401).send({status:false}) 
+
+  
+  const result = await Formation.findOneAndUpdate({_id:req.params.id},{
+
+    evaluations:req.body,
+  })
+
+  const formation2 = await Formation.findById(req.params.id)
+
+  return res.send({status:true,resultat:formation2})
+})
+
+
 router.get('/deleteFormation/:id',  verifytoken, async(req,res)=>{
     
     if(req.user.user.role != "Formateur" && req.user.user.role != "admin") return res.status(401).send({status:false})
