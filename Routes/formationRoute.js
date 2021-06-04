@@ -101,9 +101,7 @@ router.post('/evaluationFormation/:id',  verifytoken, async(req,res)=>{
 
   if(!formation) return res.status(401).send({status:false}) 
 
-  
   const result = await Formation.findOneAndUpdate({_id:req.params.id},{
-
     evaluations:req.body,
   })
 

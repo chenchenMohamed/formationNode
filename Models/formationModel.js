@@ -41,7 +41,7 @@ const schemaFormation=mongoose.Schema({
     }],
 
     evaluations:[{
-        nomUtilisateur:{type:String,default: ""},
+        emailUtilisateur:{type:String,default: ""},
         nbrEtoiles:{type:Number,default: 0},
     }],
     
