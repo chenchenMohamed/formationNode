@@ -3,12 +3,14 @@ const Joi=require('joi')
 const mongoosePaginate = require('mongoose-paginate');
 var random = require('mongoose-simple-random');
 
+const Schema = mongoose.Schema
+
 const schemaFormation=mongoose.Schema({
     
     nom:{type:String, default: ""},
     nomLower:{type:String, default: ""},
 
-    formateur:{type:String, default: ""},
+    formateur:{type: Schema.Types.ObjectId, ref: "User"},
     
     prixVente:{type:Number, default: 0},
     

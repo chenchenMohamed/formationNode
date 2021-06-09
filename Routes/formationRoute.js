@@ -152,6 +152,7 @@ router.post('/listFormation', async(req,res)=>{
     page: req.body.page,
     limit: Number(req.body.limitItems) ,
     customLabels: myCustomLabels,
+    populate: 'formateur',
     sort:{
       createdAt: -1 
     }
