@@ -216,8 +216,6 @@ router.post('/listFormationFormateur',  verifytoken, async(req,res)=>{
 
 router.post('/recherche/:search', async(req,res)=>{
   
-    const {error}=validateFormationPagination(req.body)
-    if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
     if(req.params.search == undefined || req.params.search == "" ){
       return
@@ -225,22 +223,25 @@ router.post('/recherche/:search', async(req,res)=>{
     
     const options = {
       page: req.body.page,
-      limit: Number(req.body.limit),
+      limit: 25,
       customLabels: myCustomLabels,
       sort:{
         createdAt: -1 
       }
     };
 
+
+    
+   
     var word = req.params.search;
     var wordLowerCase = word.toLowerCase();
     
     var listFilter =[]
     listFilter.push({nomLower:{ $regex: '.*' + wordLowerCase + '.*' }})
-    listFilter.push({ref:{ $regex: '.*' + word + '.*' }})
-    listFilter.push({marque:{ $regex: '.*' + word + '.*' }})
     listFilter.push({'categories.categorie':{ $regex: '.*' + word + '.*' }})
     
+    console.log(listFilter)
+
     const result=await Formation.paginate({$or:listFilter}, options) 
     return res.send({status:true,resultat:result}) 
     
