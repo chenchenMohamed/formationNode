@@ -127,15 +127,17 @@ router.post('/register',async(req,res)=>{
     const emailExist = await User.findOne({ email: req.body.email});
     if(emailExist) return res.send({status:false,message:'errorRegister'})
 
+    let isActive = 1; 
+
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(req.body.password, salt);
 
     let role = req.body.role;
 
-    if(role == "formateur"){
-        role == "etudiant"
+    if(role == "Formateur"){
+        isActive = 0;
     }
-    
+
     const admin = await User.findOne({ role: 'admin'});
     
     if (admin == null){
@@ -159,6 +161,7 @@ router.post('/register',async(req,res)=>{
         pays: req.body.pays,
         codePostal: req.body.codePostal,
         company: req.body.company,
+        isActive:isActive,
     })
 
     const result=await user.save()
@@ -174,6 +177,12 @@ router.post('/login',async(req,res)=>{
     
     const user = await User.findOne({ email: req.body.email});
     if(!user) return res.send({status:false, message:'errorLogin'});
+
+  
+    if(user.isActive == 0 && user.role !="admin"){
+      return res.status(401).send({status:false})
+    }
+    
 
     const validPass = await bcrypt.compare(req.body.password, user.password);
     if(!validPass) return res.send({status:false, message:'errorLogin'})    
@@ -287,6 +296,18 @@ router.post('/update', verifytoken, async(req,res)=>{
 })
 
 
+router.post('/ActiveFormateur/:id/:active', async(req,res)=>{
+    
+    const result = await User.findByIdAndUpdate(req.params.id,{
+       isActive:req.params.active,  
+    })
+    
+    return res.send({status:true,resultat:result, request:req.body})
+  
+})
+
+
+
 router.post('/listesClients', verifytoken, async(req,res)=>{
 
     const options = {
@@ -306,42 +327,6 @@ router.post('/listesClients', verifytoken, async(req,res)=>{
     return res.send({status:true,resultat:result})
 })
 
-router.post('/formateurs', async(req,res)=>{
-    
-  
-    const {error}=validateFormationsCategories(req.body)
-
-    if(error) return res.status(400).send({status:false,message:error.details[0].message})
-    
-    const options = {
-      page: req.body.page,
-      limit: Number(req.body.limitItems) ,
-      customLabels: myCustomLabels,
-      sort:{
-        createdAt: -1 
-      }
-    };
-  
-    var tabFilterGlobal = {}
-  
-    var filterCategories = []
-    
-    for(var i = 0; i < req.body.listCategories.length; i++){
-      filterCategories.push({'categories.categorie':req.body.listCategories[i].categories});
-    }
-  
-    if(filterCategories.length > 0){
-      ok =true
-      tabFilterGlobal = {role: "Formateur", $or : filterCategories}
-    }else{
-      tabFilterGlobal = {role: "Formateur"}
-    }
-  
-    const result=await  User.paginate(tabFilterGlobal, options) 
-    
-    return res.send({status:true,resultat:result, request:req.body})
-  
-})
   
 router.post('/etudiants', async(req,res)=>{
     
@@ -375,6 +360,30 @@ router.post('/etudiants', async(req,res)=>{
     }
   
     const result=await  User.paginate(tabFilterGlobal, options) 
+    
+    return res.send({status:true,resultat:result, request:req.body})
+  
+})
+
+
+router.post('/formateurs', async(req,res)=>{
+    
+  
+    const {error}=validateFormationsCategories(req.body)
+
+    if(error) return res.status(400).send({status:false,message:error.details[0].message})
+    
+    const options = {
+      page: req.body.page,
+      limit: Number(req.body.limitItems) ,
+      customLabels: myCustomLabels,
+      sort:{
+        createdAt: -1 
+      }
+    };
+  
+   
+    const result=await  User.paginate({role:"Formateur"}, options) 
     
     return res.send({status:true,resultat:result, request:req.body})
   

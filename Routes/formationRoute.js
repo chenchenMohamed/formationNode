@@ -38,6 +38,12 @@ router.post('/newFormation',  verifytoken, async(req,res)=>{
    
     if(req.user.user.role != "Formateur") return res.status(401).send({status:false})
    
+    const formateur = await User.findById(req.user.user.id);
+
+    if(formateur.isActive == 0 && formateur.role !="admin"){
+      return res.status(401).send({status:false})
+    }
+
     let dateCurrent = dateFormat(new Date(), "yyyy-mm-dd HH:MM");
 
     const formation=new Formation({
@@ -66,6 +72,12 @@ router.post('/modifierFormation/:id',  verifytoken, async(req,res)=>{
     if(error) return res.status(400).send({status:false,message:error.details[0].message})
     
     if(req.user.user.role != "Formateur" && req.user.user.role != "admin") return res.status(401).send({status:false})
+
+    const formateur = await User.findById(req.user.user.id);
+
+    if(formateur.isActive == 0 && formateur.role !="admin"){
+      return res.status(401).send({status:false})
+    }
     
     dateNow = dateFormat(new Date(), "yyyy-mm-dd HH:MM")
     
@@ -115,6 +127,12 @@ router.get('/deleteFormation/:id',  verifytoken, async(req,res)=>{
     
     if(req.user.user.role != "Formateur" && req.user.user.role != "admin") return res.status(401).send({status:false})
 
+    const formateur = await User.findById(req.user.user.id);
+
+    if(formateur.isActive == 0 && formateur.role !="admin"){
+      return res.status(401).send({status:false})
+    }
+
     const formation = await Formation.findById(req.params.id)
    
     if(!formation) return res.status(402).send({status:false}) 
@@ -146,7 +164,7 @@ const myCustomLabels = {
 router.post('/listFormation', async(req,res)=>{
 
   const {error}=validateFormationsCategories(req.body)
- if(error) return res.status(400).send({status:false,message:error.details[0].message})
+  if(error) return res.status(400).send({status:false,message:error.details[0].message})
   
   const options = {
     page: req.body.page,
@@ -201,9 +219,11 @@ router.post('/listFormationFormateur',  verifytoken, async(req,res)=>{
     filterCategories.push({'categories.categorie':req.body.listCategories[i].categories});
   }
 
+  console.log(req.user.user.id);
+
   if(filterCategories.length > 0){
     ok =true
-    tabFilterGlobal = {$or : filterCategories, formateur:req.user.user._id}
+    tabFilterGlobal = {$or : filterCategories, formateur:req.user.user.id}
   }else{
     tabFilterGlobal = {formateur:req.user.user.id}
   }

@@ -36,10 +36,12 @@ const schemaUser=mongoose.Schema({
             value:{type:String, default: ""},
          }],
         
-         experiences:[{
+        experiences:[{
             title:{type:String, default: ""},
             value:{type:String, default: ""},
         }],
+
+        isActive:{type:Number,default: 1},
        
     },
     {

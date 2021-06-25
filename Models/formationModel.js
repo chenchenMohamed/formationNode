@@ -115,9 +115,9 @@ function validateFormationsCategories(cats){
 
     
     const schema3=Joi.object({
-        page:Joi.number().required(),
-        limitItems:Joi.number().required(),
-        listCategories:Joi.array().items(itemCategorie),
+            page:Joi.number().required(),
+            limitItems:Joi.number().required(),
+            listCategories:Joi.array().items(itemCategorie).allow('', null),
     })
 
     return schema3.validate(cats)
