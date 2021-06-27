@@ -134,7 +134,7 @@ router.post('/register',async(req,res)=>{
 
     let role = req.body.role;
 
-    if(role == "Formateur"){
+    if (role == "Formateur"){
         isActive = 0;
     }
 
@@ -388,6 +388,20 @@ router.post('/formateurs', async(req,res)=>{
     return res.send({status:true,resultat:result, request:req.body})
   
 })
+
+router.get('/deleteUser/:id',  verifytoken, async(req,res)=>{
+    
+    if(req.user.user.role != "admin") return res.status(401).send({status:false})
+
+  
+    if(await User.findOneAndDelete({_id:req.params.id})){
+        return res.send({status:true})
+    }else{
+        return res.send({status:false})
+    }
+
+})
+
 
 function verifytoken(req, res, next){
     
