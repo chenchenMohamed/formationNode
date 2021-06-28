@@ -180,7 +180,7 @@ router.post('/login',async(req,res)=>{
 
   
     if(user.isActive == 0 && user.role !="admin"){
-      return res.status(401).send({status:false})
+        return res.send({status:false, message:'errorLogin2'});
     }
     
 
@@ -401,7 +401,6 @@ router.get('/deleteUser/:id',  verifytoken, async(req,res)=>{
     }
 
 })
-
 
 function verifytoken(req, res, next){
     
